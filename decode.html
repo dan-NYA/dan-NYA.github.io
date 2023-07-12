@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MystiCODE</title>
+  <link rel="stylesheet" href="decode.css"> 
+</head>
+
+<body>
+  <h1>MystiCODE</h1>
+  <div class="form-container">
+    <label>Select Operation:</label><br>
+    <input type="radio" id="encryption-radio" name="operation" value="encryption" checked onchange="handleOperationChange()">
+    <label for="encryption-radio">Encryption</label><br>
+    <input type="radio" id="decryption-radio" name="operation" value="decryption" onchange="handleOperationChange()">
+    <label for="decryption-radio">Decryption</label><br>
+    <p>Enter a Message:</p>
+    <input type="text" id="message-input" oninput="performOperation()">
+    <div class="output-container">
+      <h2>Result:</h2>
+      <textarea class="outputpoll" id="result-display" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    function handleOperationChange() {
+      const encryptionRadio = document.getElementById('encryption-radio');
+      const decryptionRadio = document.getElementById('decryption-radio');
+      const messageInput = document.getElementById('message-input');
+      const resultDisplay = document.getElementById('result-display');
+
+      if (encryptionRadio.checked) {
+        messageInput.placeholder = 'Enter a message to encrypt';
+        resultDisplay.textContent = '';
+        encrypt(messageInput.value);
+      } else if (decryptionRadio.checked) {
+        messageInput.placeholder = 'Enter a message to decrypt';
+        resultDisplay.textContent = '';
+        decrypt(messageInput.value);
+      }
+    }
+
+    function encrypt(message) {
+      const alphabet = 'diovaglrytckqxenbhzfmpsuwj';
+      const encodedNumbers = [];
+
+      const lowercaseMessage = message.toLowerCase();
+
+      for (let i = 0; i < lowercaseMessage.length; i++) {
+        const letter = lowercaseMessage.charAt(i);
+        let number;
+        if (letter === ' ') {
+          number = 27; // Assign 27 for space
+        } else {
+          const index = alphabet.indexOf(letter);
+          if (index !== -1) {
+            number = index + 1;
+          }
+        }
+        if (number) {
+          encodedNumbers.push(number);
+        }
+      }
+
+      const encodedString = encodedNumbers.join(',');
+      displayResult(encodedString);
+    }
+
+    function decrypt(message) {
+      const mapping = {
+        1: 'D', 2: 'I', 3: 'O', 4: 'V', 5: 'A', 6: 'G', 7: 'L', 8: 'R',
+        9: 'Y', 10: 'T', 11: 'C', 12: 'K', 13: 'Q', 14: 'X',
+        15: 'E', 16: 'N', 17: 'B', 18: 'H', 19: 'Z', 20: 'F',
+        21: 'M', 22: 'P', 23: 'S', 24: 'U', 25: 'W', 26: 'J',
+        27: ' ', // Assign space for number 27
+      };
+
+      let decryptedMessage = '';
+      const encryptedNumbers = message.split(',');
+
+      for (let i = 0; i < encryptedNumbers.length; i++) {
+        const number = parseInt(encryptedNumbers[i]);
+        const decryptedLetter = mapping[number] || '';
+
+        decryptedMessage += decryptedLetter;
+      }
+
+      displayResult(decryptedMessage);
+    }
+
+    function displayResult(result) {
+      const resultDisplay = document.getElementById('result-display');
+      resultDisplay.textContent = result;
+    }
+
+    function performOperation() {
+      const encryptionRadio = document.getElementById('encryption-radio');
+      const decryptionRadio = document.getElementById('decryption-radio');
+      const selectedOption = encryptionRadio.checked ? 'encryption' : 'decryption';
+
+      const messageInput = document.getElementById('message-input');
+      const resultDisplay = document.getElementById('result-display');
+      const message = messageInput.value.trim();
+
+      if (selectedOption === 'encryption') {
+        encrypt(message);
+      } else if (selectedOption === 'decryption') {
+        decrypt(message);
+      }
+    }
+  </script>
+</body>
+</html>
